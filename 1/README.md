@@ -1,4 +1,3 @@
-```markdown
 # Day 1 – Terraform Provider Discipline
 
 Today I revisited provider mechanics — not from a beginner perspective, but from a reliability and maintainability standpoint.
@@ -30,11 +29,12 @@ They:
 - Manage resource CRUD logic
 
 For AWS:
+
 ```
 
 hashicorp/aws
 
-````
+```
 
 Terraform Core itself does not speak AWS — the provider does.
 
@@ -45,6 +45,7 @@ That separation matters when debugging.
 # Terraform Core vs Provider
 
 ### Terraform Core
+
 - CLI binary
 - Builds dependency graph
 - Calculates plan
@@ -52,6 +53,7 @@ That separation matters when debugging.
 - Executes operations
 
 ### Provider
+
 - External plugin
 - Handles API interaction
 - Independently versioned
@@ -69,18 +71,23 @@ You can upgrade one without upgrading the other.
 This isn’t theoretical — it’s operational risk control.
 
 ### Compatibility
+
 Certain provider versions require minimum Terraform versions.
 
 ### Stability
+
 Unpinned providers = unpredictable behavior over time.
 
 ### Features
+
 New AWS services appear in newer provider versions.
 
 ### Bug Fixes
+
 Security and correctness patches ship frequently.
 
 ### Reproducibility
+
 Same code + different provider version ≠ same infrastructure behavior.
 
 ---
@@ -89,13 +96,13 @@ Same code + different provider version ≠ same infrastructure behavior.
 
 Terraform supports multiple constraint operators:
 
-| Constraint | Meaning |
-|------------|----------|
-| `= 1.2.3` | Exact version |
-| `>= 1.2` | Minimum version |
-| `<= 1.2` | Maximum version |
-| `~> 1.2` | Pessimistic constraint |
-| `>= 1.2, < 2.0` | Explicit range |
+| Constraint      | Meaning                |
+| --------------- | ---------------------- |
+| `= 1.2.3`       | Exact version          |
+| `>= 1.2`        | Minimum version        |
+| `<= 1.2`        | Maximum version        |
+| `~> 1.2`        | Pessimistic constraint |
+| `>= 1.2, < 2.0` | Explicit range         |
 
 ---
 
@@ -105,7 +112,7 @@ Example:
 
 ```hcl
 version = "~> 5.0"
-````
+```
 
 Allows:
 
@@ -240,5 +247,6 @@ Nothing groundbreaking — just reinforcing fundamentals:
 Next: Resource-level provisioning (S3 and beyond).
 
 ```
+
 
 ```

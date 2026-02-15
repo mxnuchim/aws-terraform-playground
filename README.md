@@ -1,4 +1,3 @@
-```markdown
 # Terraform + AWS Playground
 
 Personal infrastructure lab.
@@ -87,6 +86,7 @@ Infrastructure confidence comes from controlled mistakes.
 ---
 
 ## Repository Structure (Example)
+
 ```
 
 .
@@ -98,6 +98,7 @@ Infrastructure confidence comes from controlled mistakes.
 ```
 
 Each directory may contain:
+
 - Notes
 - Example Terraform configs
 - Experiments
@@ -149,6 +150,7 @@ This repo documents that mindset.
 ---
 
 Next step: Remote state and backend architecture.
+
 ```
 
 ---
@@ -162,7 +164,5 @@ Short version (recommended):
 Alternative slightly longer version:
 
 > A structured Terraform + AWS playground documenting provider discipline, versioning strategy, authentication patterns, and production-oriented infrastructure practices. Written as personal notes and future teaching material.
-
-```
 
 ```
