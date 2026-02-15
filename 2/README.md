@@ -1,4 +1,6 @@
-# Day 2 – S3 + Auth Revisited
+# Day 2 – S3 + Auth 
+
+<img width="1031" height="480" alt="Screenshot 2026-02-15 at 09 24 15" src="https://github.com/user-attachments/assets/392a52e7-0c9d-4e2b-affb-6f199b5dca34" />
 
 Today was straightforward: wiring Terraform to AWS properly and creating a clean S3 bucket from code.
 
