@@ -87,16 +87,6 @@ Infrastructure confidence comes from controlled mistakes.
 
 ## Repository Structure (Example)
 
-```
-
-.
-├── day-0-introduction/
-├── day-1-providers/
-├── day-2-s3-auth/
-└── README.md
-
-```
-
 Each directory may contain:
 
 - Notes
@@ -148,5 +138,3 @@ It is lifecycle management.
 This repo documents that mindset.
 
 ---
-
-Next step: Remote state and backend architecture.
