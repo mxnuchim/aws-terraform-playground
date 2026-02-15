@@ -31,8 +31,6 @@ Common methods I reviewed:
 aws configure
 ```
 
-````
-
 Stored in:
 
 ```
@@ -189,4 +187,6 @@ That’s where things become production-grade.
 ```
 
 
-````
+
+
+```

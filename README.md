@@ -150,19 +150,3 @@ This repo documents that mindset.
 ---
 
 Next step: Remote state and backend architecture.
-
-```
-
----
-
-### 📌 Suggested GitHub Repository Description
-
-Short version (recommended):
-
-> Personal Terraform + AWS playground — production-minded notes on providers, authentication, versioning discipline, and infrastructure lifecycle management.
-
-Alternative slightly longer version:
-
-> A structured Terraform + AWS playground documenting provider discipline, versioning strategy, authentication patterns, and production-oriented infrastructure practices. Written as personal notes and future teaching material.
-
-```
