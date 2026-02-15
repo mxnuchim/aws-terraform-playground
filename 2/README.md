@@ -1,4 +1,3 @@
-````markdown
 # Day 2 – S3 + Auth Revisited
 
 Today was straightforward: wiring Terraform to AWS properly and creating a clean S3 bucket from code.
@@ -31,6 +30,7 @@ Common methods I reviewed:
 ```bash
 aws configure
 ```
+
 ````
 
 Stored in:
@@ -188,4 +188,5 @@ That’s where things become production-grade.
 
 ```
 
-```
+
+````
