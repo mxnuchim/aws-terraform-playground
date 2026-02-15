@@ -1,347 +1,305 @@
-# Day 4 – Terraform Variables
+# Terraform Variables Demo (Keeping It Simple)
 
-Variables are not just a Terraform feature — they’re an architectural hygiene tool aimed at removing chaos from configuration.
+# 🎯 Goal
 
----
+Demonstrate the **three types of Terraform variables** using a single S3 bucket:
 
-# Why Variables Matter (Beyond “Don’t Repeat Yourself”)
+- Input variables
+- Local variables
+- Output variables
 
-At surface level:
+Nothing more.
 
-> Variables prevent repeating the same values everywhere.
-
-But in reality, they:
-
-- Enforce consistency across resources
-- Reduce human error
-- Enable multi-environment deployments
-- Make infrastructure reusable
-- Improve change safety
-
-Hardcoding `dev` in 15 places is not just messy — it’s operational risk.
-
-One typo (`staging` vs `stage`) and now your tagging strategy is inconsistent.
-
-That’s how drift begins.
-
-<img width="1071" height="487" alt="Screenshot 2026-02-15 at 17 24 32" src="https://github.com/user-attachments/assets/0a289b40-9c1d-4a64-a134-2ec58f03420f" />
-
+One resource. Clean structure. Clear behavior.
 
 ---
 
-# The Core Pattern
+# 🧠 The Mental Model
 
-Instead of this:
+Think of Terraform like a function:
 
-```hcl
-tags = {
-  Environment = "dev"
-}
-```
+- **Input variables** → parameters
+- **Locals** → internal computed values
+- **Resources** → execution
+- **Outputs** → return values
 
-We define:
+That’s it.
+
+---
+
+# 📥 1. Input Variables (variables.tf)
+
+These are external configuration values.
+
+They allow customization without editing resource code.
 
 ```hcl
 variable "environment" {
-  default = "dev"
-  type    = string
+  description = "Environment name"
+  type        = string
+  default     = "staging"
+}
+
+variable "bucket_name" {
+  description = "Base S3 bucket name"
+  type        = string
+  default     = "my-terraform-bucket"
 }
 ```
 
-Then reference:
+### How They’re Used
 
 ```hcl
-tags = {
-  Environment = var.environment
+resource "aws_s3_bucket" "demo" {
+  bucket = var.bucket_name
+
+  tags = {
+    Environment = var.environment
+  }
 }
 ```
 
-The important detail:
+Important reminder:
 
-We reference using **the local variable name**, not the value.
+Always reference input variables using:
 
-`var.environment`
-NOT
-`var.dev`
-
-This is subtle but foundational.
-
----
-
-# String Interpolation – Important Reminder
-
-When concatenating strings:
-
-```hcl
-"${var.environment}-vpc"
+```
+var.<variable_name>
 ```
 
-Terraform must resolve the variable first, then concatenate.
-
-Senior engineer takeaway:
-Know when you need interpolation syntax and when direct reference is enough.
+Never hardcode values inside resources.
 
 ---
 
-# Types – More Important Than They Look
+# 🏗 2. Local Variables (locals.tf)
 
-Terraform variables are categorized by **type constraints**.
-
-## Primitive Types
-
-- `string`
-- `number`
-- `bool`
-
-These are straightforward.
-
-But the real power starts with:
-
-## Complex Types
-
-- `list`
-- `set`
-- `map`
-- `object`
-- `tuple`
-
-And special types:
-
-- `null`
-- `any`
-
-Key reminder:
-
-If you omit `type`, Terraform assumes `any`.
-
-That’s flexible.
-But flexibility without constraints can create ambiguity.
-
-In mature systems, I should prefer explicit typing.
-
-Strong typing = fewer surprises.
-
----
-
-# Input Variables vs Locals vs Outputs
-
-Today clarified the distinction cleanly.
-
-## 1. Input Variables (`variable`)
-
-Purpose:
-External configuration.
-
-These are meant to be overridden.
-
-They define what _can change_.
-
-Think of them as:
-The interface of the module.
-
----
-
-## 2. Locals (`locals`)
-
-Purpose:
-Internal computation.
+Locals are internal computed values.
 
 They are not meant to be overridden.
 
-Example:
+They help centralize logic and reduce repetition.
 
 ```hcl
 locals {
-  bucket_name = "${var.channel}-bucket-${var.environment}"
+  common_tags = {
+    Environment = var.environment
+    Project     = "Terraform-Demo"
+  }
+
+  full_bucket_name = "${var.environment}-${var.bucket_name}-${random_string.suffix.result}"
 }
 ```
 
-Then used as:
+Then used like this:
 
 ```hcl
-bucket = local.bucket_name
-```
-
-This is powerful.
-
-Variables define input.
-Locals derive computed values.
-
-This separation improves readability and avoids repeating logic everywhere.
-
-As systems grow, locals become critical for:
-
-- Naming conventions
-- Tag maps
-- Derived IDs
-- Cross-resource computed strings
-
-This is architectural clarity, not just syntactic sugar.
-
----
-
-## 3. Output Variables (`output`)
-
-Purpose:
-Expose values after apply.
-
-Example:
-
-```hcl
-output "vpc_id" {
-  value = aws_vpc.sample.id
+resource "aws_s3_bucket" "demo" {
+  bucket = local.full_bucket_name
+  tags   = local.common_tags
 }
 ```
 
-Outputs:
+Note:
 
-- Print values to console
-- Allow cross-module communication
-- Surface important infrastructure identifiers
+Input variables define what changes.
+Locals define how values are constructed.
 
-Reminder:
-Outputs only resolve after `apply`.
-
-And:
-`terraform output` retrieves stored output values from state.
-
-That’s useful when chaining modules or debugging.
+That separation keeps modules clean.
 
 ---
 
-# Variable Precedence (This Is Operationally Critical)
+# 📤 3. Output Variables (output.tf)
 
-Terraform loads variables in a specific order.
+Outputs expose useful values after deployment.
+
+They act like return values.
+
+```hcl
+output "bucket_name" {
+  description = "Name of the S3 bucket"
+  value       = aws_s3_bucket.demo.bucket
+}
+
+output "bucket_arn" {
+  description = "ARN of the S3 bucket"
+  value       = aws_s3_bucket.demo.arn
+}
+
+output "environment" {
+  description = "Environment used"
+  value       = var.environment
+}
+
+output "tags" {
+  description = "Computed tags"
+  value       = local.common_tags
+}
+```
+
+After `terraform apply`, you can run:
+
+```
+terraform output
+terraform output bucket_name
+terraform output -json
+```
+
+Outputs are stored in state — no need to re-apply.
+
+---
+
+# 📂 Clean File Structure
+
+```
+├── main.tf
+├── variables.tf
+├── locals.tf
+├── output.tf
+├── provider.tf
+├── terraform.tfvars
+└── README.md
+```
+
+This structure mirrors real-world Terraform module layout.
+
+---
+
+# 🔁 Variable Precedence (Practical Version)
 
 From lowest to highest precedence:
 
-1. Default inside `variable` block
-2. Environment variables (`TF_VAR_environment`)
+1. Default values (inside `variables.tf`)
+2. Environment variables (`TF_VAR_`)
 3. `terraform.tfvars`
-4. `*.auto.tfvars`
-5. `-var`
-6. `-var-file`
+4. `-var-file`
+5. `-var` (command line)
 
-The highest one wins.
-
-Example:
-
-If default is `"dev"`,
-but I export:
-
-```bash
-export TF_VAR_environment=stage
-```
-
-Terraform will use `"stage"`.
-
-If I then define:
-
-```hcl
-# terraform.tfvars
-environment = "preprod"
-```
-
-Now `"preprod"` wins.
-
-If I run:
-
-```bash
-terraform plan -var="environment=prod"
-```
-
-Now `"prod"` wins over everything.
-
-This is not academic.
-
-This is how environments get accidentally misconfigured.
-
-Senior engineer takeaway:
-Be intentional about where variables are defined.
-Avoid accidental overrides in CI/CD pipelines.
+Highest wins.
 
 ---
 
-# Preferred Patterns (From Experience)
+# 🧪 Practical Testing
 
-### For teams:
+## 1️⃣ Default Only
 
-Use `terraform.tfvars` for environment-specific values.
-
-### For CI:
-
-Use `-var-file` with explicit environment files.
-
-Example:
+Temporarily hide `terraform.tfvars`:
 
 ```
-terraform apply -var-file=prod.tfvars
+mv terraform.tfvars terraform.tfvars.backup
+terraform plan
 ```
+
+Uses:
+
+```
+environment = "staging"
+```
+
+Restore file:
+
+```
+mv terraform.tfvars.backup terraform.tfvars
+```
+
+---
+
+## 2️⃣ Using terraform.tfvars
+
+Example `terraform.tfvars`:
+
+```hcl
+environment = "demo"
+bucket_name = "terraform-demo-bucket"
+```
+
+Run:
+
+```
+terraform plan
+```
+
+Uses values from tfvars automatically.
+
+---
+
+## 3️⃣ Command Line Override
+
+```
+terraform plan -var="environment=production"
+```
+
+Overrides everything else.
+
+---
+
+## 4️⃣ Environment Variables
+
+```
+export TF_VAR_environment="from-env"
+terraform plan
+```
+
+Works — but command line still wins.
+
+Clean up:
+
+```
+unset TF_VAR_environment
+```
+
+---
+
+## 5️⃣ Using Different tfvars Files
+
+```
+terraform plan -var-file="dev.tfvars"
+terraform plan -var-file="production.tfvars"
+```
+
+This is how real environments are typically handled.
 
 Explicit > implicit.
 
-### For secrets:
+---
 
-Do NOT rely on tfvars committed to Git.
-Use secret managers or environment injection.
+# 🚀 What This Demo Actually Creates
 
-And remember:
-Environment variables are stored in shell history.
+One S3 bucket.
+
+But it demonstrates:
+
+- Parameterization (input variables)
+- Computation (locals)
+- Exposure (outputs)
+- Precedence behavior
+
+That’s enough to understand 80% of Terraform variable usage.
 
 ---
 
-# A Subtle but Important Lesson Today
+# 🔧 Try These Commands
 
-Using variables is not just about convenience.
+```
+terraform init
+terraform plan
+terraform apply
+terraform output
+terraform destroy
+```
 
-It’s about:
-
-- Reducing configuration drift
-- Making modules reusable
-- Enabling clean environment promotion
-- Improving change safety
-- Separating configuration from logic
-
-Variables define what changes.
-Locals define how values are constructed.
-Outputs define what is exposed.
-
-That’s a clean mental model.
+Keep it simple. Observe behavior. Change inputs. Re-run.
 
 ---
 
-# Debugging Reality Check
+# 💡 Key Takeaways
 
-Two reminders from today’s demo:
+- Input variables → configure behavior
+- Locals → compute reusable values
+- Outputs → expose results
+- Precedence matters
+- Keep logic centralized
+- Avoid hardcoding environment values
 
-1. Resource names change across provider versions.
-   Never blindly trust autocomplete.
-   Always verify against documentation.
+```
 
-2. `terraform plan` cannot detect runtime AWS API errors.
-   Invalid AMI IDs only fail at `apply`.
-
-Plan ≠ guarantee of success.
-
----
-
-# Mental Model Upgrade
-
-Earlier Terraform mindset:
-
-> “Variables help avoid repetition.”
-
-Now:
-
-> “Variables define the external contract of infrastructure.”
-
-That shift matters.
-
-When writing modules:
-
-- Variables = interface
-- Locals = implementation logic
-- Resources = execution
-- Outputs = exported API
-
-That’s clean software engineering applied to infrastructure.
+```
