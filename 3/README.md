@@ -8,9 +8,10 @@ The state file manages all the providers and states in Terraform. And needs to b
 
 This is one of the fundamentals in production-grade infrastructure engineering.
 
----
-<img width="1053" height="495" alt="Screenshot 2026-02-15 at 13 11 44" src="https://github.com/user-attachments/assets/110a5768-7c14-4818-ad6c-0ea7ced8caa0" />
+<img width="1053" height="495" alt="Screenshot 2026-02-15 at 13 11 44" src="https://github.com/user-attachments/assets/55e157bd-9de8-4bcb-8ef9-001bd15f7398" />
 
+
+---
 
 # Why State Exists (Mental Model Refresh)
 
