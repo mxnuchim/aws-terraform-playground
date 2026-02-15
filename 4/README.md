@@ -22,8 +22,10 @@ Hardcoding `dev` in 15 places is not just messy — it’s operational risk.
 
 One typo (`staging` vs `stage`) and now your tagging strategy is inconsistent.
 
-That’s not a beginner mistake.
 That’s how drift begins.
+
+<img width="1071" height="487" alt="Screenshot 2026-02-15 at 17 24 32" src="https://github.com/user-attachments/assets/0a289b40-9c1d-4a64-a134-2ec58f03420f" />
+
 
 ---
 
