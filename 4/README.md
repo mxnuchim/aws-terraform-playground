@@ -1,4 +1,4 @@
-# Terraform Variables Demo (Keeping It Simple)
+# Terraform Variables
 
 # 🎯 Goal
 
