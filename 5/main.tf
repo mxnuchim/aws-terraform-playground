@@ -23,7 +23,8 @@ resource "aws_vpc" "dev_vpc" {
 resource "aws_instance" "dev_ec2" {
   count = var.instance_count
   ami           = "ami-0c1fe732b5494dc14"
-  instance_type = var.instance_type
+  instance_type = "t4.large"
+  // instance_type = var.instance_type
   monitoring = var.monitoring_enabled
   associate_public_ip_address = var.associate_public_ip_address
 

@@ -21,6 +21,11 @@ variable "instance_count" {
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
+
+  validation {
+    condition     = contains(local.allowed_vm_types, var.instance_type)
+    error_message = "Invalid instance type. Must be one of ${join(", ", local.allowed_vm_types)}"
+  }
 }
 
 variable "monitoring_enabled" {
@@ -39,11 +44,7 @@ variable "cidr_block" {
   default     = ["10.0.0.0/8", "172.16.0.0/16", "192.168.0.0/16"]
 }
 
-variable "allowed_vm_types" {
-  description = "Allowed VM types"
-  type        = list(string)
-  default     = ["t2.micro", "t2.small", "t3.micro", "t3.small"]
-}
+
 
 
   
