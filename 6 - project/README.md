@@ -2,6 +2,8 @@
 
 ### S3 + CloudFront + Secure Caching Architecture
 
+<img width="1167" height="440" alt="Screenshot 2026-02-25 at 21 24 08" src="https://github.com/user-attachments/assets/5a50b876-6913-4d0a-a385-b5daefd1cefd" />
+
 This project provisions and deploys my personal portfolio to AWS using Terraform, implementing a secure, globally distributed, and cache-optimized architecture.
 
 The objective was to treat a personal website as production infrastructure — fully reproducible, secure by default, and designed with performance in mind.
