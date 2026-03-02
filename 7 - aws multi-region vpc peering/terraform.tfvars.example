@@ -1,0 +1,8 @@
+primary_region = ""
+secondary_region = ""
+primary_vpc_cidr = ""
+secondary_vpc_cidr = ""
+environment = ""
+company = ""
+primary_key_name = ""
+secondary_key_name = ""

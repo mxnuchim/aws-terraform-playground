@@ -14,3 +14,6 @@ crash.log
 
 # Keep lock file (important!)
 !.terraform.lock.hcl
+
+# keep tfvars.example
+!.tfvars.example
