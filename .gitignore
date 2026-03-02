@@ -17,3 +17,4 @@ crash.log
 
 # keep tfvars.example
 !.tfvars.example
+*.pem
